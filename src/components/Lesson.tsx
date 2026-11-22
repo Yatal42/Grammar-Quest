@@ -1,9 +1,10 @@
 import { useEffect, type ReactNode } from 'react'
-import { GRADE_LABELS, TOPICS, type Topic } from '../data/topics'
+import { GRADE_LABELS, TOPICS, type Grade, type Topic } from '../data/topics'
 import { LESSONS, type LessonTable } from '../data/lessons'
 
 type Props = {
   topic: Topic
+  grade: Grade
   onPractice: () => void
   onBack: () => void
   onOpen: (topicId: string) => void
@@ -117,11 +118,12 @@ function Table({ table }: { table: LessonTable }) {
   )
 }
 
-export default function Lesson({ topic, onPractice, onBack, onOpen }: Props) {
+export default function Lesson({ topic, grade, onPractice, onBack, onOpen }: Props) {
   const lesson = LESSONS[topic.id]
-  const idx = TOPICS.findIndex((t) => t.id === topic.id)
-  const prev = TOPICS[idx - 1]
-  const next = TOPICS[idx + 1]
+  const visible = TOPICS.filter((t) => t.grade <= Math.max(grade, topic.grade))
+  const idx = visible.findIndex((t) => t.id === topic.id)
+  const prev = visible[idx - 1]
+  const next = visible[idx + 1]
 
   useEffect(() => {
     window.scrollTo({ top: 0 })

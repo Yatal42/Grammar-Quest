@@ -80,6 +80,7 @@ export default function App() {
           return (
             <Lesson
               topic={topic}
+              grade={profile.grade}
               onPractice={() => start('topic', topic.id)}
               onBack={() => setScreen(screen.from === 'lessons' ? { name: 'lessons' } : { name: 'home' })}
               onOpen={(topicId) => setScreen({ ...screen, topicId })}

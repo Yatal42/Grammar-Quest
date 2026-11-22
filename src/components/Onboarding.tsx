@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GRADE_LABELS, type Grade } from '../data/topics'
+import { GRADE_LABELS, GRADES, type Grade } from '../data/topics'
 import type { Profile } from '../lib/storage'
 
 export const AVATARS = ['🦉', '🦊', '🐼', '🐯', '🐸', '🦄', '🐙', '🐲', '🤖', '👾', '🦁', '🐧']
@@ -20,7 +20,7 @@ export default function Onboarding({ onDone }: { onDone: (p: Profile) => void })
           <h1 className="mt-3 text-4xl font-extrabold" dir="ltr">
             Grammar <span className="text-amber-400">Quest</span>
           </h1>
-          <p className="mt-2 text-white/70">הרפתקת הדקדוק באנגלית לכיתות ו' עד ט'</p>
+          <p className="mt-2 text-white/70">הרפתקת הדקדוק באנגלית לכיתות ו' עד י"ב</p>
         </div>
 
         <label className="mt-8 block text-sm font-medium text-white/80">איך קוראים לך?</label>
@@ -49,11 +49,11 @@ export default function Onboarding({ onDone }: { onDone: (p: Profile) => void })
 
         <p className="mt-6 text-sm font-medium text-white/80">באיזו כיתה את/ה?</p>
         <div className="mt-2 grid grid-cols-4 gap-2">
-          {([6, 7, 8, 9] as Grade[]).map((g) => (
+          {GRADES.map((g) => (
             <button
               key={g}
               onClick={() => setGrade(g)}
-              className={`btn ${g === grade ? 'bg-amber-400 text-indigo-950' : 'bg-white/10 hover:bg-white/20'}`}
+              className={`btn !px-2 ${g === grade ? 'bg-amber-400 text-indigo-950' : 'bg-white/10 hover:bg-white/20'}`}
             >
               {GRADE_LABELS[g]}
             </button>

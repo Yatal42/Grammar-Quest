@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CURRICULUM_NOTE, GRADE_LABELS, TOPICS, type Grade } from '../data/topics'
+import { CURRICULUM_NOTE, GRADE_LABELS, GRADES, TOPICS } from '../data/topics'
 import { BLITZ_SECONDS, levelFor, titleFor, type Mode } from '../lib/game'
 import type { Profile } from '../lib/storage'
 import { AVATARS } from './Onboarding'
@@ -17,7 +17,7 @@ type Props = {
 export default function Home({ profile, onStart, onDictionary, onLearn, onUpdate, onReset }: Props) {
   const [showAll, setShowAll] = useState(false)
   const { level, progress, toNext } = levelFor(profile.xp)
-  const grades = ([6, 7, 8, 9] as Grade[]).filter((g) => showAll || g <= profile.grade)
+  const grades = GRADES.filter((g) => showAll || g <= profile.grade)
   const totalStars = Object.values(profile.stars).reduce((a, b) => a + b, 0)
 
   const cycleAvatar = () => {
@@ -97,11 +97,16 @@ export default function Home({ profile, onStart, onDictionary, onLearn, onUpdate
             {showAll ? 'רק עד הכיתה שלי' : 'הצג את כל הכיתות'}
           </button>
         </div>
-        {grades.map((g) => (
+        {grades.map((g) => {
+          const topics = TOPICS.filter((t) => t.grade === g)
+          return (
           <div key={g}>
             <h3 className="mb-2 text-sm font-semibold text-white/60">כיתה {GRADE_LABELS[g]}</h3>
+            {topics.length === 0 ? (
+              <p className="text-sm text-white/50">עדיין אין נושאים בכיתה הזו</p>
+            ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {TOPICS.filter((t) => t.grade === g).map((t) => (
+              {topics.map((t) => (
                 <div
                   key={t.id}
                   className="card relative transition hover:-translate-y-1 hover:bg-white/15"
@@ -123,17 +128,22 @@ export default function Home({ profile, onStart, onDictionary, onLearn, onUpdate
                 </div>
               ))}
             </div>
+            )}
           </div>
-        ))}
+          )
+        })}
       </section>
 
       <footer className="flex flex-wrap items-center justify-center gap-3 pt-4 text-sm">
         <select
           value={profile.grade}
-          onChange={(e) => onUpdate({ ...profile, grade: Number(e.target.value) as Grade })}
+          onChange={(e) => {
+            const grade = GRADES.find((g) => String(g) === e.target.value)
+            if (grade) onUpdate({ ...profile, grade })
+          }}
           className="btn-ghost py-2"
         >
-          {([6, 7, 8, 9] as Grade[]).map((g) => (
+          {GRADES.map((g) => (
             <option key={g} value={g} className="text-black">
               כיתה {GRADE_LABELS[g]}
             </option>

@@ -1143,5 +1143,435 @@ export const LESSONS: Record<string, Lesson> = {
     ],
     remember: 'חיובי + זנב שלילי, שלילי + זנב חיובי. משתמשים באותו פועל עזר ובאותו זמן כמו במשפט, ובכינוי גוף (לא בשם).',
   },
+
+  'possessive-pronouns': {
+    what: 'כינויי קניין אומרים למי משהו שייך, בלי לחזור על שם העצם. לפני שם עצם אומרים my או your, ולבד אומרים mine או yours. שואלים "של מי?" עם Whose, ו"שייך ל-" זה belong to.',
+    uses: [
+      { use: 'בלי שם עצם אחרי המילה', en: 'This book is mine.', he: 'הספר הזה שלי.' },
+      { use: 'שאלה: זה שלך?', en: 'Is this pen yours?', he: 'העט הזה שלך?' },
+      { use: 'של מי?', en: 'Whose shoes are these?', he: 'של מי הנעליים האלה?' },
+      { use: 'שייך למישהו', en: 'This phone belongs to my brother.', he: 'הטלפון הזה שייך לאחי.' },
+      { use: 'הוא הבעלים של משהו', en: 'My uncle owns a small restaurant.', he: 'לדוד שלי יש מסעדה קטנה.' },
+    ],
+    build: [
+      { label: 'לפני שם עצם', parts: ['my / your / her …', 'שם עצם'], ex: 'This is my book.' },
+      { label: 'חיובי, בלי שם עצם', parts: ['שם עצם', 'is / are', 'mine / yours …'], ex: 'This book is mine.' },
+      { label: 'שלילי', parts: ['שם עצם', "isn't / aren't", 'mine / yours …'], ex: "This pen isn't mine." },
+      { label: 'שאלה: של מי', parts: ['Whose', 'שם עצם', 'is / are', 'these', '?'], ex: 'Whose bag is this?' },
+      { label: 'שייך ל-', parts: ['נושא', 'belong / belongs to', 'אדם'], ex: 'This seat belongs to Dana.' },
+    ],
+    tables: [
+      {
+        title: 'לפני שם עצם, או לבד',
+        head: ['לפני שם עצם', 'לבד', 'עברית'],
+        rows: [
+          ['my', 'mine', 'שלי'],
+          ['your', 'yours', 'שלך / שלכם'],
+          ['his', 'his', 'שלו'],
+          ['her', 'hers', 'שלה'],
+          ['our', 'ours', 'שלנו'],
+          ['their', 'theirs', 'שלהם'],
+        ],
+      },
+      {
+        title: 'נשמע אותו דבר, משמעות אחרת',
+        head: ['כתיב', 'פירוש', 'דוגמה'],
+        rows: [
+          ['Whose', 'של מי', 'Whose bag is this?'],
+          ["Who's", 'קיצור של who is', "Who's at the door?"],
+        ],
+      },
+    ],
+    signals: ['Whose', 'belong to', 'own', 'mine', 'yours', 'hers', 'ours', 'theirs'],
+    signalsTitle: 'מילים שכדאי לזכור',
+    spelling: [
+      { rule: 'בכינויים שעומדים לבד אין גרש', ex: 'hers, yours, ours, theirs' },
+      { rule: 'גרש לפני s רק אחרי שם של אדם', ex: "Dana's bag, the teacher's pen" },
+    ],
+    mistakes: [
+      { bad: 'This is not your pencil. It is my.', good: 'This is not your pencil. It is mine.', why: 'בלי שם עצם אחרי המילה אומרים mine, לא my.' },
+      { bad: "This bag is her's.", good: 'This bag is hers.', why: 'במילה hers אין גרש.' },
+      { bad: "Who's shoes are these?", good: 'Whose shoes are these?', why: 'שואלים "של מי?" עם Whose. המילה Who\'s היא קיצור של who is.' },
+      { bad: 'This phone belongs my brother.', good: 'This phone belongs to my brother.', why: 'אחרי belong חייבים to.' },
+      { bad: 'These seats are our.', good: 'These seats are ours.', why: 'בלי שם עצם אחרי המילה אומרים ours.' },
+    ],
+    remember: 'יש שם עצם אחרי המילה? my, your, her. אין שם עצם? mine, yours, hers. ושל מי? Whose, בלי גרש.',
+  },
+
+  'tense-contrast': {
+    what: 'באנגלית בוחרים זמן לפי סוג הפעולה. הרגל, עובדה או פעולה שנגמרה באים בזמן פשוט. משהו שקורה באמצע בא בזמן מתמשך. מילת הרמז במשפט עוזרת להחליט, ופעלי מצב כמעט אף פעם לא באים עם ing.',
+    uses: [
+      { use: 'הרגל או עובדה: הווה פשוט', en: 'My dad usually walks to work.', he: 'אבא שלי בדרך כלל הולך לעבודה ברגל.' },
+      { use: 'ממש עכשיו: הווה מתמשך', en: 'Shh! Grandpa is taking a nap.', he: 'שקט! סבא מנמנם עכשיו.' },
+      { use: 'פעולה שנגמרה: עבר פשוט', en: 'She bought a new bike last month.', he: 'היא קנתה אופניים חדשים בחודש שעבר.' },
+      { use: 'פעולה שהייתה באמצע: עבר מתמשך', en: 'We were watching a movie when the power went out.', he: 'צפינו בסרט כשהחשמל נפל.' },
+      { use: 'פועל מצב, בלי ing', en: 'I know the answer.', he: 'אני יודע את התשובה.' },
+    ],
+    build: [
+      { label: 'הווה פשוט', parts: ['נושא', 'V1 (+s)'], ex: 'She usually walks.' },
+      { label: 'הווה מתמשך', parts: ['נושא', 'am / is / are', 'V-ing'], ex: 'She is walking now.' },
+      { label: 'עבר פשוט', parts: ['נושא', 'V2'], ex: 'She walked yesterday.' },
+      { label: 'עבר מתמשך', parts: ['נושא', 'was / were', 'V-ing'], ex: 'She was walking at 8.' },
+      { label: 'שלילה במתמשך', parts: ['נושא', "isn't / wasn't", 'V-ing'], ex: "She isn't walking now." },
+      { label: 'שאלה על עכשיו', parts: ['What', 'is / are', 'נושא', 'V-ing', '?'], ex: 'What is she doing now?' },
+      { label: 'שאלה עם פועל מצב', parts: ['Do / Does', 'נושא', 'V1', '?'], ex: 'Do you know the answer?' },
+    ],
+    tables: [
+      {
+        title: 'איזה זמן לבחור?',
+        head: ['רואים במשפט', 'הזמן', 'דוגמה'],
+        rows: [
+          ['usually, every day', 'הווה פשוט', 'I usually walk.'],
+          ['now, Look!', 'הווה מתמשך', 'Look! She is running.'],
+          ['yesterday, last week', 'עבר פשוט', 'I saw him yesterday.'],
+          ['at 8, while', 'עבר מתמשך', 'I was sleeping at 8.'],
+        ],
+      },
+      {
+        title: 'פעלי מצב: בלי ing',
+        head: ['פועל', 'פירוש'],
+        rows: [
+          ['know', 'לדעת'],
+          ['like / love', 'לאהוב'],
+          ['want', 'לרצות'],
+          ['need', 'להצטרך'],
+          ['believe', 'להאמין'],
+          ['understand', 'להבין'],
+        ],
+      },
+    ],
+    signals: ['always', 'usually', 'every day', 'now', 'right now', 'Look!', 'Listen!', 'yesterday', 'last week', 'while', 'when'],
+    mistakes: [
+      { bad: 'Look! The dog runs.', good: 'Look! The dog is running.', why: 'המילה Look! אומרת שזה קורה עכשיו, ולכן הווה מתמשך.' },
+      { bad: 'I am knowing the answer.', good: 'I know the answer.', why: 'הפועל know הוא פועל מצב, וכמעט אף פעם לא בא עם ing.' },
+      { bad: 'She was buy a bike last month.', good: 'She bought a bike last month.', why: 'המילים last month מתארות פעולה שנגמרה, ולכן עבר פשוט.' },
+      { bad: 'We watched a movie when suddenly the lights went out.', good: 'We were watching a movie when suddenly the lights went out.', why: 'הפעולה הארוכה שנקטעה באמצע באה בעבר מתמשך, והפעולה הקצרה בעבר פשוט.' },
+      { bad: 'This milk is smelling strange.', good: 'This milk smells strange.', why: 'כשמתארים ריח שיש למשהו, smell הוא פועל מצב ואין ing.' },
+    ],
+    remember: 'הרגל או עובדה = זמן פשוט. באמצע הפעולה = זמן מתמשך. פעלי מצב כמו know, like, want, need ו-believe נשארים בלי ing.',
+  },
+
+  'present-perfect-progressive': {
+    what: 'הווה מושלם מתמשך מתאר פעולה שהתחילה בעבר ועדיין נמשכת, או שרואים עכשיו את התוצאה שלה. משתמשים בו כשחשוב כמה זמן הפעולה נמשכת. פעלי מצב נשארים בהווה מושלם רגיל, בלי ing.',
+    uses: [
+      { use: 'פעולה שנמשכת עד עכשיו', en: 'I have been waiting for the bus for twenty minutes.', he: 'אני מחכה לאוטובוס כבר עשרים דקות.' },
+      { use: 'שאלה על משך הזמן', en: 'How long have you been living in Haifa?', he: 'כמה זמן אתה גר בחיפה?' },
+      { use: 'רואים את התוצאה עכשיו', en: 'Your eyes are red. Have you been crying?', he: 'העיניים שלך אדומות. בכית?' },
+      { use: 'סיבה למצב בהווה', en: 'He is tired because he has been working all day.', he: 'הוא עייף כי הוא עובד כל היום.' },
+    ],
+    build: [
+      { label: 'חיובי', parts: ['נושא', 'have / has', 'been', 'V-ing'], ex: 'She has been reading.' },
+      { label: 'שלילי', parts: ['נושא', "haven't / hasn't", 'been', 'V-ing'], ex: "I haven't been sleeping well." },
+      { label: 'שאלה', parts: ['Have / Has', 'נושא', 'been', 'V-ing', '?'], ex: 'Have you been waiting long?' },
+    ],
+    tables: [
+      {
+        title: 'מתי רגיל ומתי מתמשך?',
+        head: ['מה חשוב?', 'הזמן', 'דוגמה'],
+        rows: [
+          ['התוצאה, או כמה פעמים', 'הווה מושלם', 'I have read three books.'],
+          ['משך הזמן והפעולה עצמה', 'הווה מושלם מתמשך', 'I have been reading all week.'],
+          ['פועל מצב כמו know', 'הווה מושלם', 'I have known her for years.'],
+        ],
+      },
+    ],
+    signals: ['for', 'since', 'How long', 'all day', 'all week', 'lately', 'recently'],
+    spelling: [
+      { rule: 'רוב הפעלים: מוסיפים ing', ex: 'wait → waiting, read → reading' },
+      { rule: 'פועל שנגמר ב-e שקטה: מורידים את ה-e', ex: 'write → writing, live → living' },
+      { rule: 'הברה אחת עם עיצור-תנועה-עיצור: מכפילים את האות האחרונה', ex: 'run → running, sit → sitting' },
+    ],
+    mistakes: [
+      { bad: 'I have waiting for an hour.', good: 'I have been waiting for an hour.', why: 'בין have לבין הפועל עם ing חסר been.' },
+      { bad: 'I have been knowing her for five years.', good: 'I have known her for five years.', why: 'הפועל know הוא פועל מצב, ולכן הווה מושלם רגיל בלי ing.' },
+      { bad: 'He have been working all day.', good: 'He has been working all day.', why: 'עם he / she / it משתמשים ב-has been.' },
+      { bad: 'I am waiting for twenty minutes.', good: 'I have been waiting for twenty minutes.', why: 'יש משך זמן מהעבר עד עכשיו, ולכן have been + ing.' },
+    ],
+    remember: 'הנוסחה: have / has + been + ing. הצורה מדגישה כמה זמן הפעולה נמשכת. פעלי מצב כמו know ו-like נשארים בלי been ובלי ing.',
+  },
+
+  'past-perfect-progressive': {
+    what: 'עבר מושלם מתמשך מתאר פעולה שנמשכה זמן מה, עד רגע מסוים בעבר. הוא גם מסביר למה משהו היה כך באותו רגע: היא הייתה עייפה כי למדה כל הלילה.',
+    uses: [
+      { use: 'פעולה שנמשכה עד רגע בעבר', en: 'I had been waiting for an hour when the bus finally came.', he: 'חיכיתי שעה, ואז האוטובוס סוף סוף הגיע.' },
+      { use: 'סיבה למצב בעבר', en: 'She was tired because she had been studying all night.', he: 'היא הייתה עייפה כי למדה כל הלילה.' },
+      { use: 'תוצאה שראו בעבר', en: 'The ground was wet. It had been raining.', he: 'האדמה הייתה רטובה. קודם לכן ירד גשם.' },
+      { use: 'שאלה על משך הזמן עד העבר', en: 'How long had you been living there before you moved?', he: 'כמה זמן גרת שם לפני שעברת דירה?' },
+    ],
+    build: [
+      { label: 'חיובי', parts: ['נושא', 'had been', 'V-ing'], ex: 'They had been talking.' },
+      { label: 'שלילי', parts: ['נושא', "hadn't been", 'V-ing'], ex: "We hadn't been waiting long." },
+      { label: 'שאלה', parts: ['Had', 'נושא', 'been', 'V-ing', '?'], ex: 'Had she been sleeping?' },
+    ],
+    tables: [
+      {
+        title: 'מה נמשך עד הרגע בעבר?',
+        head: ['לפני כן', 'ואז'],
+        rows: [
+          ['They had been waiting for an hour', 'when I arrived.'],
+          ['She had been studying all night,', 'so she was tired.'],
+          ['We had been driving for three hours', 'when the car broke down.'],
+        ],
+      },
+    ],
+    signals: ['for', 'since', 'How long', 'when', 'before', 'all day', 'all night'],
+    spelling: [
+      { rule: 'רוב הפעלים: מוסיפים ing', ex: 'wait → waiting, study → studying' },
+      { rule: 'פועל שנגמר ב-e שקטה: מורידים את ה-e', ex: 'drive → driving, live → living' },
+      { rule: 'הברה אחת עם עיצור-תנועה-עיצור: מכפילים את האות האחרונה', ex: 'run → running, sit → sitting' },
+    ],
+    mistakes: [
+      { bad: 'When I arrived, they have been waiting.', good: 'When I arrived, they had been waiting.', why: 'שני הדברים קרו בעבר, ולכן had been ולא have been.' },
+      { bad: 'She was tired because she had been studied.', good: 'She was tired because she had been studying.', why: 'אחרי had been בא פועל עם ing, לא V3.' },
+      { bad: 'I had been wait for an hour.', good: 'I had been waiting for an hour.', why: 'אחרי been חסר ה-ing.' },
+      { bad: 'How long you had been living there?', good: 'How long had you been living there?', why: 'בשאלה had בא לפני הנושא.' },
+    ],
+    remember: 'הנוסחה: had been + ing, ו-had זהה לכל הגופים. הפעולה נמשכה עד רגע בעבר. אם רק רוצים להגיד שהיא נגמרה לפני פעולה אחרת, בלי משך, משתמשים ב-had + V3.',
+  },
+
+  'zero-conditional': {
+    what: 'משפט תנאי אפס מתאר עובדה, חוק או תוצאה שתמיד קורית. שני חלקי המשפט בהווה פשוט: אם עושים א, תמיד קורה ב. מקרה אחד בעתיד הוא כבר תנאי ראשון, עם will.',
+    uses: [
+      { use: 'עובדה מדעית', en: 'If you heat water to 100 degrees, it boils.', he: 'אם מחממים מים למאה מעלות, הם רותחים.' },
+      { use: 'תוצאה שתמיד קורית', en: 'If you mix red and white, you get pink.', he: 'אם מערבבים אדום ולבן, מקבלים ורוד.' },
+      { use: 'הרגל קבוע', en: 'If my dog hears the door, he always barks.', he: 'אם הכלב שלי שומע את הדלת, הוא תמיד נובח.' },
+      { use: 'אפשר גם when, כי זה תמיד', en: 'When you press this button, the machine turns on.', he: 'כשלוחצים על הכפתור, המכונה נדלקת.' },
+    ],
+    build: [
+      { label: 'חלק התנאי', parts: ['If', 'נושא', 'הווה פשוט'], ex: 'If you heat water,' },
+      { label: 'חלק התוצאה', parts: ['נושא', 'הווה פשוט'], ex: 'it boils.' },
+      { label: 'שלילי', parts: ['If', 'נושא', "don't / doesn't", 'V1'], ex: "If plants don't get water, they die." },
+      { label: 'שאלה', parts: ['What happens if', 'נושא', 'V1', '?'], ex: 'What happens if you drop an egg?' },
+    ],
+    signals: ['if', 'when', 'always', 'every time'],
+    mistakes: [
+      { bad: 'If you will heat ice, it melts.', good: 'If you heat ice, it melts.', why: 'בתנאי אפס אין will. שני החלקים בהווה פשוט.' },
+      { bad: 'If you mix blue and yellow, you got green.', good: 'If you mix blue and yellow, you get green.', why: 'זו עובדה שתמיד נכונה, ולכן גם התוצאה בהווה פשוט.' },
+      { bad: 'If water boil, it becomes steam.', good: 'If water boils, it becomes steam.', why: 'אחרי if זה הווה פשוט רגיל, ועם water צריך s בפועל.' },
+      { bad: 'If it rains tomorrow, we stay home.', good: 'If it rains tomorrow, we will stay home.', why: 'מקרה אחד בעתיד הוא תנאי ראשון, עם will בתוצאה.' },
+    ],
+    remember: 'תמיד קורה? If + הווה פשוט, ואז שוב הווה פשוט. אין will. מקרה אחד בעתיד הוא תנאי ראשון.',
+  },
+
+  'second-conditional': {
+    what: 'משפט תנאי שני מדבר על מצב דמיוני, או על משהו שלא סביר שיקרה עכשיו או בעתיד. בעברית אומרים "אם היה לי..." או "אילו הייתי...". זה לא סיפור על משהו שכבר קרה.',
+    uses: [
+      { use: 'חלום או מצב לא מציאותי', en: 'If I had a million shekels, I would travel the world.', he: 'אם היה לי מיליון שקלים, הייתי נוסע בעולם.' },
+      { use: 'עצה: אם הייתי במקומך', en: 'If I were you, I would take the bus.', he: 'אם הייתי במקומך, הייתי נוסע באוטובוס.' },
+      { use: 'משהו שלא נכון עכשיו', en: "If he weren't so lazy, he would get better grades.", he: 'אם הוא לא היה כל כך עצלן, היו לו ציונים טובים יותר.' },
+      { use: 'דמיון מוחלט', en: 'If dogs could talk, what would they say?', he: 'אם כלבים יכלו לדבר, מה הם היו אומרים?' },
+    ],
+    build: [
+      { label: 'חלק התנאי', parts: ['If', 'נושא', 'עבר פשוט'], ex: 'If I had a million shekels,' },
+      { label: 'חלק התוצאה', parts: ['נושא', 'would', 'V1'], ex: 'I would travel the world.' },
+      { label: 'שלילי', parts: ['If', 'נושא', "didn't", 'V1', ',', 'נושא', "wouldn't", 'V1'], ex: "If I didn't live so far away, I wouldn't be late." },
+      { label: 'עם be', parts: ['If', 'נושא', 'were'], ex: 'If I were you, I would take the bus.' },
+      { label: 'שאלה', parts: ['What', 'would', 'נושא', 'do if', 'נושא', 'V2', '?'], ex: 'What would you do if you won?' },
+    ],
+    signals: ['if', 'would', 'were', 'If I were you'],
+    mistakes: [
+      { bad: 'If I would have a lot of money, I would buy a house.', good: 'If I had a lot of money, I would buy a house.', why: 'אחרי if בתנאי שני בא עבר פשוט, לא would.' },
+      { bad: 'If I was you, I would apologize.', good: 'If I were you, I would apologize.', why: 'בתנאי דמיוני, עם be משתמשים ב-were לכל הגופים.' },
+      { bad: 'If she lived here, she will visit us.', good: 'If she lived here, she would visit us.', why: 'בחלק התוצאה של תנאי דמיוני בא would, לא will.' },
+      { bad: 'If I had money, I would bought a car.', good: 'If I had money, I would buy a car.', why: 'אחרי would בא פועל בסיסי.' },
+    ],
+    remember: 'מצב דמיוני עכשיו או בעתיד: If + עבר פשוט, would + פועל בסיסי. עם be אומרים were לכל הגופים. זה לא סיפור על העבר.',
+  },
+
+  'third-conditional': {
+    what: 'משפט תנאי שלישי מדבר על העבר: משהו שלא קרה, ואי אפשר לשנות אותו. זה חרטה או דמיון על מה שכבר עבר. בעברית: "אם הייתי לומד אז, הייתי עובר".',
+    uses: [
+      { use: 'חרטה על העבר', en: 'If I had studied, I would have passed the test.', he: 'אם הייתי לומד למבחן ההוא, הייתי עובר.' },
+      { use: 'תוצאה שלא קרתה', en: "If it hadn't rained, we would have gone to the beach.", he: 'אם לא היה יורד גשם, היינו הולכים לים.' },
+      { use: 'קודם התוצאה, בלי פסיק', en: 'She would have come if you had invited her.', he: 'היא הייתה באה אם היית מזמין אותה.' },
+      { use: 'שאלה על העבר הדמיוני', en: 'What would you have done if you had missed the bus?', he: 'מה היית עושה אם היית מפספס את האוטובוס?' },
+    ],
+    build: [
+      { label: 'חלק התנאי', parts: ['If', 'נושא', 'had', 'V3'], ex: 'If I had studied,' },
+      { label: 'חלק התוצאה', parts: ['נושא', 'would have', 'V3'], ex: 'I would have passed.' },
+      { label: 'שלילי', parts: ['If', 'נושא', "hadn't", 'V3', ',', 'נושא', "wouldn't have", 'V3'], ex: "If it hadn't rained, we would have gone out." },
+      { label: 'שאלה', parts: ['What', 'would', 'נושא', 'have', 'V3', 'if', 'נושא', 'had', 'V3', '?'], ex: 'What would you have done if you had missed the bus?' },
+    ],
+    signals: ['if', 'had', 'would have', "hadn't", "wouldn't have"],
+    mistakes: [
+      { bad: 'If I would have studied, I would have passed.', good: 'If I had studied, I would have passed.', why: 'אחרי if על העבר בא had + V3, לא would have.' },
+      { bad: 'If you had told me, I would help you.', good: 'If you had told me, I would have helped you.', why: 'גם התוצאה על העבר: would have + V3.' },
+      { bad: 'If we had left earlier, we would have catched the train.', good: 'If we had left earlier, we would have caught the train.', why: 'אחרי would have בא V3: catch - caught - caught.' },
+      { bad: 'If she has studied, she would have passed.', good: 'If she had studied, she would have passed.', why: 'הסיפור בעבר, ולכן had ולא has.' },
+    ],
+    remember: 'משהו שלא קרה בעבר: If + had + V3, would have + V3. המילה would נמצאת רק בחלק התוצאה.',
+  },
+
+  'wishes': {
+    what: 'המילה wish מבטאת משאלה על משהו שלא נכון עכשיו, או חרטה על משהו שכבר קרה. אחרי wish הזמן זז אחורה: על ההווה משתמשים בעבר פשוט, ועל העבר ב-had + V3.',
+    uses: [
+      { use: 'משאלה על ההווה', en: "I don't have a bike. I wish I had one.", he: 'אין לי אופניים. הלוואי שהיו לי.' },
+      { use: 'עם be אומרים were', en: 'I wish I were taller.', he: 'הלוואי שהייתי גבוה יותר.' },
+      { use: 'משאלה על יכולת', en: 'She wishes she could speak French.', he: 'הלוואי שהיא יכלה לדבר צרפתית.' },
+      { use: 'חרטה על העבר', en: "I wish I hadn't eaten so much cake.", he: 'הלוואי שלא אכלתי כל כך הרבה עוגה.' },
+      { use: 'רוצים שמישהו אחר ישתנה', en: 'I wish my brother would stop making noise.', he: 'הלוואי שאחי היה מפסיק לעשות רעש.' },
+    ],
+    build: [
+      { label: 'חיובי, על ההווה', parts: ['נושא', 'wish / wishes', 'נושא', 'V2'], ex: 'I wish I lived by the sea.' },
+      { label: 'שלילה על ההווה', parts: ['נושא', 'wish / wishes', 'נושא', "didn't", 'V1'], ex: "He wishes he didn't live in the city." },
+      { label: 'על יכולת', parts: ['נושא', 'wish / wishes', 'נושא', 'could', 'V1'], ex: 'I wish I could fly.' },
+      { label: 'על העבר', parts: ['נושא', 'wish / wishes', 'נושא', 'had', 'V3'], ex: "I wish I hadn't said that." },
+      { label: 'שמישהו אחר ישתנה', parts: ['נושא', 'wish / wishes', 'אדם', 'would', 'V1'], ex: 'I wish it would stop raining.' },
+      { label: 'שאלה', parts: ['Do / Does', 'נושא', 'wish', 'נושא', 'V2', '?'], ex: 'Do you wish you had a dog?' },
+    ],
+    tables: [
+      {
+        title: 'איזו משאלה?',
+        head: ['על מה?', 'המבנה', 'דוגמה'],
+        rows: [
+          ['ההווה', 'עבר פשוט אחרי wish', 'I wish I had a dog.'],
+          ['יכולת', 'wish + could', 'I wish I could swim.'],
+          ['העבר', 'wish + had + V3', 'I wish I had studied.'],
+          ['התנהגות של מישהו אחר', 'wish + would', 'I wish you would listen.'],
+        ],
+      },
+    ],
+    signals: ['wish', 'wishes', 'were', 'could', 'would', 'had'],
+    mistakes: [
+      { bad: 'I wish I have a dog.', good: 'I wish I had a dog.', why: 'משאלה על ההווה באה עם עבר פשוט, לא עם הווה.' },
+      { bad: 'I wish I am taller.', good: 'I wish I were taller.', why: 'אחרי wish, עם be משתמשים ב-were.' },
+      { bad: "I wish I didn't eat so much yesterday.", good: "I wish I hadn't eaten so much yesterday.", why: 'חרטה על משהו שכבר קרה: wish + had + V3.' },
+      { bad: 'I wish I would have a car.', good: 'I wish I had a car.', why: 'על עצמנו לא אומרים wish I would. משאלה על ההווה: wish + עבר פשוט.' },
+      { bad: 'She wish she could fly.', good: 'She wishes she could fly.', why: 'עם he / she / it הפועל wish מקבל s: wishes.' },
+    ],
+    remember: 'על ההווה: wish + עבר פשוט, ועם be אומרים were. על העבר: wish + had + V3. אחרי had יש שם עצם כמו a dog? זו משאלה על עכשיו. אחרי had יש פועל כמו studied? זו חרטה על העבר.',
+  },
+
+  'adjectives-ed-ing': {
+    what: 'שם תואר מתאר שם עצם. הוא בא לפני השם, או אחרי פעלים כמו be, look, feel, sound, taste ו-smell. סיומת ing מתארת את מה שגורם לרגש, וסיומת ed את מי שמרגיש אותו.',
+    uses: [
+      { use: 'לפני שם העצם', en: 'We live in a big old house.', he: 'אנחנו גרים בבית גדול וישן.' },
+      { use: 'אחרי פועל כמו look או taste', en: 'The soup smells good.', he: 'המרק מריח טוב.' },
+      { use: 'מה שגורם לרגש', en: 'The movie was boring.', he: 'הסרט היה משעמם.' },
+      { use: 'מי שמרגיש את הרגש', en: 'I was bored, so I fell asleep.', he: 'השתעממתי, אז נרדמתי.' },
+      { use: 'איך עושים פעולה', en: 'She answered all the questions correctly.', he: 'היא ענתה על כל השאלות נכון.' },
+    ],
+    build: [
+      { label: 'חיובי: מה שגורם', parts: ['דבר', 'is / was', 'שם תואר + ing'], ex: 'The movie is boring.' },
+      { label: 'חיובי: מי שמרגיש', parts: ['אדם', 'is / was', 'שם תואר + ed'], ex: 'I was excited.' },
+      { label: 'שלילי', parts: ['נושא', "isn't", 'שם תואר'], ex: "The lesson isn't boring." },
+      { label: 'שאלה', parts: ['Is / Are', 'נושא', 'שם תואר', '?'], ex: 'Are you interested in science?' },
+      { label: 'לפני שם עצם', parts: ['a / the', 'שם תואר', 'שם עצם'], ex: 'a big old house' },
+      { label: 'תואר פועל', parts: ['פועל', 'שם תואר + ly'], ex: 'She answered correctly.' },
+    ],
+    tables: [
+      {
+        title: 'זוגות נפוצים',
+        head: ['מי שמרגיש', 'מה שגורם', 'עברית'],
+        rows: [
+          ['bored', 'boring', 'משועמם / משעמם'],
+          ['interested', 'interesting', 'מתעניין / מעניין'],
+          ['excited', 'exciting', 'נרגש / מרגש'],
+          ['surprised', 'surprising', 'מופתע / מפתיע'],
+          ['tired', 'tiring', 'עייף / מעייף'],
+          ['frightened', 'frightening', 'מפוחד / מפחיד'],
+        ],
+      },
+    ],
+    signals: ['be', 'look', 'feel', 'sound', 'taste', 'smell', 'seem'],
+    signalsTitle: 'אחרי הפעלים האלה בא שם תואר',
+    spelling: [
+      { rule: 'פועל רגיל: ed למי שמרגיש, ing למה שגורם', ex: 'bored / boring, tired / tiring' },
+      { rule: 'נגמר ב-e: מוסיפים רק d, ומורידים את ה-e לפני ing', ex: 'surprised / surprising, excited / exciting' },
+      { rule: 'עיצור + y בשם תואר עם ed: ה-y הופך ל-ied', ex: 'worry → worried' },
+      { rule: 'תואר פועל: בדרך כלל מוסיפים ly', ex: 'correct → correctly, careful → carefully' },
+    ],
+    mistakes: [
+      { bad: 'The movie was bored.', good: 'The movie was boring.', why: 'הסרט גורם לשעמום, ולכן ing. מי שמשתעמם הוא האדם: I was bored.' },
+      { bad: 'I am very interesting in science.', good: 'I am very interested in science.', why: 'אני זה שמרגיש עניין, ולכן ed.' },
+      { bad: 'This cake tastes deliciously.', good: 'This cake tastes delicious.', why: 'אחרי taste בא שם תואר, לא תואר פועל עם ly.' },
+      { bad: 'She answered the questions correct.', good: 'She answered the questions correctly.', why: 'מתארים איך היא ענתה, ולכן תואר פועל עם ly.' },
+      { bad: 'We live in an old big house.', good: 'We live in a big old house.', why: 'כשיש כמה שמות תואר, הגודל בא לפני הגיל.' },
+    ],
+    remember: 'הדבר משעמם (boring), והאדם משועמם (bored). אחרי look, feel, taste ו-smell בא שם תואר. איך עושים פעולה? מוסיפים ly.',
+  },
+
+  'modals-advanced': {
+    what: 'מלבד can, must ו-should יש עוד פעלים מודאליים. הם מדברים על אפשרות, על יכולת בזמנים שבהם אין can, על עצה, ועל מה שמצופה מאיתנו. אחרי כולם בא פועל בסיסי.',
+    uses: [
+      { use: 'אפשרות: אולי', en: 'Take an umbrella. It might rain later.', he: 'כדאי לקחת מטרייה. אולי ירד גשם אחר כך.' },
+      { use: 'יכולת בעתיד', en: "I won't be able to play next week.", he: 'לא אוכל לשחק בשבוע הבא.' },
+      { use: 'הצלחה במקרה מסוים בעבר', en: 'After many tries, he was able to open the box.', he: 'אחרי הרבה ניסיונות הוא הצליח לפתוח את הקופסה.' },
+      { use: 'כדאי, כמו should', en: 'You ought to see a doctor.', he: 'כדאי לך ללכת לרופא.' },
+      { use: 'מצופה מאיתנו', en: 'We were supposed to be in class at 8:00.', he: 'היינו אמורים להיות בכיתה בשעה שמונה.' },
+      { use: 'חובה בעבר', en: 'Yesterday I had to stay home because I was sick.', he: 'אתמול הייתי חייב להישאר בבית כי הייתי חולה.' },
+    ],
+    build: [
+      { label: 'חיובי: אולי', parts: ['נושא', 'may / might', 'V1'], ex: 'She might come to the party.' },
+      { label: 'שלילי: אולי לא', parts: ['נושא', 'might not', 'V1'], ex: 'She might not come.' },
+      { label: 'יכולת', parts: ['נושא', 'be able to', 'V1'], ex: 'I will be able to help you tomorrow.' },
+      { label: 'כדאי', parts: ['נושא', 'ought to', 'V1'], ex: 'You ought to rest.' },
+      { label: 'אמור', parts: ['נושא', 'am / is / are', 'supposed to', 'V1'], ex: 'You are supposed to wear a uniform.' },
+      { label: 'חובה בעבר', parts: ['נושא', 'had to', 'V1'], ex: 'We had to leave early.' },
+      { label: 'שאלה', parts: ['Will', 'נושא', 'be able to', 'V1', '?'], ex: 'Will you be able to come?' },
+    ],
+    tables: [
+      {
+        title: 'איזו מילה מתאימה?',
+        head: ['משמעות', 'הצורה', 'דוגמה'],
+        rows: [
+          ['אולי', 'may / might', 'It may be true.'],
+          ['יכול, גם בעתיד ובעבר', 'be able to', 'She will be able to come.'],
+          ['כדאי', 'ought to', 'You ought to study.'],
+          ['אמור, מצופה', 'be supposed to', 'I am supposed to call her.'],
+          ['הייתי חייב', 'had to', 'I had to wait.'],
+        ],
+      },
+    ],
+    signals: ['may', 'might', 'be able to', 'ought to', 'supposed to', 'had to'],
+    mistakes: [
+      { bad: 'It might to rain later.', good: 'It might rain later.', why: 'אחרי might ו-may אין to.' },
+      { bad: "I won't can come tomorrow.", good: "I won't be able to come tomorrow.", why: 'אחרי will אי אפשר לשים can. אומרים be able to.' },
+      { bad: 'You ought see a doctor.', good: 'You ought to see a doctor.', why: 'אחרי ought חייבים to. זה שונה מ-should, שבא בלי to.' },
+      { bad: 'We supposed to be here at 8.', good: 'We are supposed to be here at 8.', why: 'לפני supposed to צריך am, is או are. בעבר: was או were.' },
+      { bad: 'Yesterday I must stay home.', good: 'Yesterday I had to stay home.', why: 'למילה must אין עבר. על חובה בעבר אומרים had to.' },
+    ],
+    remember: 'אולי = may או might, בלי to. כשאי אפשר להשתמש ב-can אומרים be able to. כדאי עם to = ought to. אמור = be supposed to. חייב בעבר = had to.',
+  },
+
+  'modal-perfects': {
+    what: 'מודאל עם have + V3 מדבר על העבר: מה היה צריך לקרות, מה בטוח קרה, ומה אולי קרה. אחרי have תמיד בא V3, והמילה have לא משתנה ל-has.',
+    uses: [
+      { use: 'היה צריך, וזה לא קרה', en: 'I failed the test. I should have studied harder.', he: 'נכשלתי במבחן. הייתי צריך ללמוד יותר.' },
+      { use: 'זה קרה, ולא היה כדאי', en: "You shouldn't have eaten so much cake.", he: 'לא היה כדאי לאכול כל כך הרבה עוגה.' },
+      { use: 'בטוחים שזה קרה', en: 'The street is wet. It must have rained.', he: 'הרחוב רטוב. בטוח ירד גשם.' },
+      { use: 'אולי זה קרה', en: "He isn't answering. He might have gone to sleep.", he: 'הוא לא עונה. אולי הוא הלך לישון.' },
+      { use: 'לא ייתכן שזה קרה', en: "She can't have seen me. I wasn't there!", he: 'לא ייתכן שהיא ראתה אותי. לא הייתי שם!' },
+      { use: 'היה אפשר, אבל לא קרה', en: 'We could have won, but we missed the last shot.', he: 'יכולנו לנצח, אבל פספסנו את הזריקה האחרונה.' },
+    ],
+    build: [
+      { label: 'חיובי', parts: ['נושא', 'should / must / might', 'have', 'V3'], ex: 'She must have forgotten.' },
+      { label: 'שלילי', parts: ['נושא', "shouldn't / can't", 'have', 'V3'], ex: "You shouldn't have said that." },
+      { label: 'שאלה', parts: ['Should', 'נושא', 'have', 'V3', '?'], ex: 'Should I have called her?' },
+    ],
+    tables: [
+      {
+        title: 'מה כל צורה אומרת על העבר?',
+        head: ['הצורה', 'המשמעות', 'דוגמה'],
+        rows: [
+          ['should have', 'היה צריך, וזה לא קרה', 'I should have called.'],
+          ["shouldn't have", 'זה קרה, ולא היה כדאי', "I shouldn't have shouted."],
+          ['must have', 'בטוח שזה קרה', 'He must have left.'],
+          ['might / may have', 'אולי זה קרה', 'She may have forgotten.'],
+          ["can't have", 'לא ייתכן שזה קרה', "He can't have known."],
+          ['could have', 'היה אפשר, וזה לא קרה', 'I could have helped.'],
+        ],
+      },
+    ],
+    signals: ['should have', 'must have', 'might have', 'may have', "can't have", 'could have'],
+    mistakes: [
+      { bad: 'I should studied harder.', good: 'I should have studied harder.', why: 'על העבר חסר have בין המודאל לבין V3.' },
+      { bad: 'You should have tell me.', good: 'You should have told me.', why: 'אחרי have בא V3: tell - told - told.' },
+      { bad: 'The street is wet. It must rained.', good: 'The street is wet. It must have rained.', why: 'מסקנה על העבר: must have + V3.' },
+      { bad: "She mustn't have seen me. I wasn't there.", good: "She can't have seen me. I wasn't there.", why: 'כשמשהו לא ייתכן בעבר אומרים can\'t have.' },
+      { bad: 'She must has forgotten.', good: 'She must have forgotten.', why: 'אחרי מודאל תמיד have, גם עם she, ולא has.' },
+    ],
+    remember: 'הנוסחה תמיד: מודאל + have + V3. היה צריך = should have. בטוח = must have. אולי = might have. לא ייתכן = can\'t have.',
+  },
 }
 

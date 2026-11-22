@@ -1,4 +1,4 @@
-export type Grade = 6 | 7 | 8 | 9
+export type Grade = 6 | 7 | 8 | 9 | 10 | 11 | 12
 
 export type ChoiceQuestion = { t: 'c'; q: string; o: string[]; e: string }
 export type OrderQuestion = { t: 'o'; a: string; e: string }
@@ -14,9 +14,19 @@ export type Topic = {
   questions: Question[]
 }
 
-export const GRADE_LABELS: Record<Grade, string> = { 6: "ו'", 7: "ז'", 8: "ח'", 9: "ט'" }
+export const GRADES: Grade[] = [6, 7, 8, 9, 10, 11, 12]
 
-export const CURRICULUM_NOTE = 'החלוקה לכיתות לפי תכנית הלימודים באנגלית של משרד החינוך (2020), בתוספת נושאי הספר Grammar Issues 1 (נושאים מתקדמים מופיעים בכיתה ט\')'
+export const GRADE_LABELS: Record<Grade, string> = {
+  6: "ו'",
+  7: "ז'",
+  8: "ח'",
+  9: "ט'",
+  10: "י'",
+  11: 'י"א',
+  12: 'י"ב',
+}
+
+export const CURRICULUM_NOTE = 'החלוקה לכיתות לפי תכנית הלימודים באנגלית של משרד החינוך (2020), בתוספת נושאי הספר Grammar Issues 1 (נושאים מתקדמים מופיעים בכיתות י\'–י"ב)'
 
 export const TOPICS: Topic[] = [
   {
@@ -509,7 +519,7 @@ export const TOPICS: Topic[] = [
     title: 'Present Perfect Progressive',
     he: 'הווה מושלם מתמשך',
     emoji: '⏳',
-    grade: 9,
+    grade: 10,
     tip: 'המבנה: have / has been + פועל עם ing. משתמשים בו לפעולה שהתחילה בעבר ועדיין נמשכת, כשרוצים להדגיש כמה זמן היא נמשכת (for, since, How long): I have been waiting for an hour. עם פעלי מצב כמו know או like משתמשים בהווה מושלם רגיל.',
     questions: [
       { t: 'c', q: "I ___ for the bus for twenty minutes, and it still hasn't come!", o: ['have been waiting', 'am waiting', 'waited', 'has been waiting'], e: 'הפעולה התחילה לפני עשרים דקות ועדיין נמשכת: have been waiting.' },
@@ -546,7 +556,7 @@ export const TOPICS: Topic[] = [
     title: 'Zero Conditional',
     he: 'משפט תנאי אפס',
     emoji: '🧪',
-    grade: 9,
+    grade: 10,
     tip: 'משפט תנאי אפס מתאר עובדה או תוצאה שתמיד קורית: If + הווה פשוט, הווה פשוט. If you mix blue and yellow, you get green. כשמדברים על מקרה אחד בעתיד משתמשים בתנאי ראשון: If it rains tomorrow, we will stay home.',
     questions: [
       { t: 'c', q: 'If you mix red and white, you ___ pink.', o: ['get', 'got', 'would get', 'getting'], e: 'עובדה שתמיד נכונה: If + הווה פשוט, הווה פשוט.' },
@@ -582,7 +592,7 @@ export const TOPICS: Topic[] = [
     title: 'Second Conditional',
     he: 'משפט תנאי שני',
     emoji: '💭',
-    grade: 9,
+    grade: 10,
     tip: 'תנאי דמיוני או לא סביר בהווה או בעתיד: If + עבר פשוט, would + פועל בסיסי. If I had a million shekels, I would travel the world. עם הפועל be משתמשים ב-were לכל הגופים: If I were you...',
     questions: [
       { t: 'c', q: 'If I ___ a lot of money, I would buy a big house.', o: ['had', 'have', 'would have', 'will have'], e: 'מצב דמיוני: אחרי if בא עבר פשוט - had.' },
@@ -601,7 +611,7 @@ export const TOPICS: Topic[] = [
     title: 'Third Conditional',
     he: 'משפט תנאי שלישי',
     emoji: '🔁',
-    grade: 9,
+    grade: 11,
     tip: 'תנאי דמיוני על העבר, על משהו שלא קרה ואי אפשר לשנות: If + had + V3, would have + V3. If I had studied, I would have passed. כלומר: לא למדתי, ולכן לא עברתי.',
     questions: [
       { t: 'c', q: "If I ___ earlier, I wouldn't have missed the bus.", o: ['had woken up', 'woke up', 'would wake up', 'have woken up'], e: 'תנאי על העבר: If + had + V3.' },
@@ -620,7 +630,7 @@ export const TOPICS: Topic[] = [
     title: 'Wishes',
     he: 'משאלות (I wish)',
     emoji: '🌠',
-    grade: 9,
+    grade: 11,
     tip: 'משאלה על ההווה (משהו שלא נכון עכשיו): wish + עבר פשוט - I wish I had a dog. עם be משתמשים ב-were: I wish I were taller. חרטה על העבר: wish + had + V3 - I wish I hadn\'t said that. כשרוצים שמישהו אחר ישנה התנהגות: wish + would.',
     questions: [
       { t: 'c', q: "I don't have a bike. I wish I ___ one.", o: ['had', 'have', 'will have', 'having'], e: 'משאלה על ההווה: wish + עבר פשוט - had.' },
@@ -675,7 +685,7 @@ export const TOPICS: Topic[] = [
     title: 'Past Perfect Progressive',
     he: 'עבר מושלם מתמשך',
     emoji: '⌛',
-    grade: 9,
+    grade: 10,
     tip: 'המבנה: had been + פועל עם ing. מתאר פעולה שנמשכה זמן מה לפני רגע מסוים או לפני פעולה אחרת בעבר: I had been waiting for an hour when the bus finally came.',
     questions: [
       { t: 'c', q: 'When I arrived, they ___ for me for an hour.', o: ['had been waiting', 'have been waiting', 'are waiting', 'has been waiting'], e: 'הם חיכו שעה לפני שהגעתי (בעבר): had been waiting.' },
@@ -731,7 +741,7 @@ export const TOPICS: Topic[] = [
     title: 'Adjectives: -ed / -ing',
     he: 'שמות תואר',
     emoji: '🎨',
-    grade: 9,
+    grade: 10,
     tip: 'שם תואר מתאר שם עצם ובא לפניו (a red car), או אחרי פעלים כמו be, look, feel, sound, taste, smell (The soup tastes good). שם תואר עם ing מתאר את מה שגורם לרגש (The movie was boring), ועם ed את מי שמרגיש (I was bored). תואר פועל (ly) מתאר איך עושים פעולה.',
     questions: [
       { t: 'c', q: 'The movie was so ___ that I fell asleep.', o: ['boring', 'bored', 'bore', 'boredly'], e: 'הסרט גרם לשעמום, ולכן ing: boring.' },
@@ -750,7 +760,7 @@ export const TOPICS: Topic[] = [
     title: 'May / Might / Be able to',
     he: 'פעלים מודאליים - המשך',
     emoji: '🧭',
-    grade: 9,
+    grade: 11,
     tip: 'אפשרות (אולי): may / might - It might rain. be able to - יכולת, גם בזמנים שבהם אי אפשר להשתמש ב-can: I will be able to come. ought to - כדאי (כמו should). be supposed to - אמור (מצופה ממני). had to - הייתי חייב (העבר של must ו-have to).',
     questions: [
       { t: 'c', q: 'Take an umbrella. It ___ rain later.', o: ['might', 'ought', 'is able to', 'supposed'], e: 'אולי ירד גשם - אפשרות: might.' },
@@ -769,7 +779,7 @@ export const TOPICS: Topic[] = [
     title: 'Modal Perfects',
     he: 'מודאלים על העבר',
     emoji: '🔙',
-    grade: 9,
+    grade: 11,
     tip: 'מודאל + have + V3 מדבר על העבר: should have - הייתי צריך (וזה לא קרה), must have - בטוח ש... (הסקה), might / may have - אולי..., can\'t have - לא ייתכן ש..., could have - היה אפשר (אבל לא קרה).',
     questions: [
       { t: 'c', q: 'I failed the test. I ___ studied harder.', o: ['should have', 'must have', 'should', "can't have"], e: 'חרטה - הייתי צריך ולא עשיתי: should have.' },

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { GRADE_LABELS, TOPICS, type Grade } from '../data/topics'
+import { GRADE_LABELS, GRADES, TOPICS, type Grade } from '../data/topics'
 import { LESSONS } from '../data/lessons'
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 }
 
 export default function Lessons({ grade, onOpen, onBack }: Props) {
-  const grades = (Object.keys(GRADE_LABELS).map(Number) as Grade[]).filter((g) => TOPICS.some((t) => t.grade === g))
+  const grades = GRADES.filter((g) => g <= grade)
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -31,14 +31,19 @@ export default function Lessons({ grade, onOpen, onBack }: Props) {
         </div>
       </header>
 
-      {grades.map((g) => (
+      {grades.map((g) => {
+        const topics = TOPICS.filter((t) => t.grade === g)
+        return (
         <section key={g}>
           <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-white/60">
             כיתה {GRADE_LABELS[g]}
             {g === grade && <span className="rounded-full bg-amber-300/20 px-2 py-0.5 text-xs text-amber-200">הכיתה שלך</span>}
           </h2>
+          {topics.length === 0 ? (
+            <p className="text-sm text-white/50">עדיין אין נושאים בכיתה הזו</p>
+          ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {TOPICS.filter((t) => t.grade === g).map((t) => (
+            {topics.map((t) => (
               <button
                 key={t.id}
                 onClick={() => onOpen(t.id)}
@@ -55,8 +60,10 @@ export default function Lessons({ grade, onOpen, onBack }: Props) {
               </button>
             ))}
           </div>
+          )}
         </section>
-      ))}
+        )
+      })}
     </div>
   )
 }
