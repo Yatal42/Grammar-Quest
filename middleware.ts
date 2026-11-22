@@ -5,7 +5,7 @@ export const config = {
 }
 
 const COOKIE_NAME = 'gq_access'
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 180
+const COOKIE_MAX_AGE = 90 * 24 * 60 * 60
 const BASE = '/grammer'
 const FAIL_DELAY_MS = 800
 
