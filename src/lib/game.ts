@@ -1,4 +1,6 @@
-import { TOPICS, type Grade, type Question, type Topic } from '../data/topics'
+import type { Grade, Question, Topic } from '../data/topics'
+import { planSession } from './generate'
+import type { RecentQuestions } from './storage'
 
 export type Mode = 'topic' | 'blitz' | 'mix'
 
@@ -7,6 +9,7 @@ export type PlayItem = {
   question: Question
   options: string[]
   correct: string
+  sig: string
 }
 
 export const SESSION_SIZE = 10
@@ -21,25 +24,31 @@ export function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function toItem(topic: Topic, question: Question): PlayItem {
+function toItem(topic: PlayItem['topic'], question: PlayItem['question'], sig: string): PlayItem {
   if (question.t === 'c') {
-    return { topic, question, options: shuffle(question.o), correct: question.o[0] }
+    return { topic, question, options: shuffle(question.o), correct: question.o[0], sig }
   }
   const words = question.a.split(' ')
   let options = shuffle(words)
-  while (words.length > 2 && options.join(' ') === question.a) options = shuffle(words)
-  return { topic, question, options, correct: question.a }
+  let guard = 0
+  while (words.length > 2 && options.join(' ') === question.a && guard < 8) {
+    options = shuffle(words)
+    guard++
+  }
+  return { topic, question, options, correct: question.a, sig }
 }
 
-export function buildSession(mode: Mode, grade: Grade, topicId?: string): PlayItem[] {
-  if (mode === 'topic') {
-    const topic = TOPICS.find((t) => t.id === topicId)!
-    return shuffle(topic.questions).slice(0, SESSION_SIZE).map((q) => toItem(topic, q))
+export function buildSession(
+  mode: Mode,
+  grade: Grade,
+  topicId?: string,
+  recent?: RecentQuestions,
+): { items: PlayItem[]; recent: RecentQuestions } {
+  const planned = planSession(mode, grade, topicId, recent)
+  return {
+    items: planned.picked.map((item) => toItem(item.topic, item.question, item.sig)),
+    recent: planned.recent,
   }
-  const pool = TOPICS.filter((t) => t.grade <= grade).flatMap((t) => t.questions.map((q) => ({ t, q })))
-  const picked = shuffle(pool)
-  const items = (mode === 'mix' ? picked.slice(0, SESSION_SIZE) : picked).map(({ t, q }) => toItem(t, q))
-  return items
 }
 
 export function pointsFor(streak: number, msLeft?: number): number {

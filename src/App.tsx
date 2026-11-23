@@ -34,8 +34,11 @@ export default function App() {
 
   if (!profile) return <Onboarding onDone={storeProfile} />
 
-  const start = (mode: Mode, topicId?: string) =>
-    setScreen({ name: 'game', mode, topicId, items: buildSession(mode, profile.grade, topicId) })
+  const start = (mode: Mode, topicId?: string) => {
+    const built = buildSession(mode, profile.grade, topicId, profile.recent)
+    setProfile({ ...profile, recent: built.recent })
+    setScreen({ name: 'game', mode, topicId, items: built.items })
+  }
 
   const finish = (mode: Mode, topicId: string | undefined, result: GameResult) => {
     const prev = profile
