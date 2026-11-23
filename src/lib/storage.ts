@@ -1,5 +1,10 @@
 import type { Grade } from '../data/topics'
 
+export type RecentQuestions = {
+  topics?: Record<string, string[]>
+  global?: string[]
+}
+
 export type Profile = {
   name: string
   avatar: string
@@ -10,6 +15,7 @@ export type Profile = {
   bestStreak: number
   sound: boolean
   learned?: string[]
+  recent?: RecentQuestions
 }
 
 const KEY = 'grammar-quest-profile'
