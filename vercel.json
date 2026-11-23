@@ -4,11 +4,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "redirects": [
-    { "source": "/", "destination": "/grammer/", "permanent": false }
+    { "source": "/", "destination": "/grammar/", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/grammer", "destination": "/grammer/index.html" },
-    { "source": "/grammer/((?!assets/).*)", "destination": "/grammer/index.html" }
+    { "source": "/grammar", "destination": "/grammar/index.html" },
+    { "source": "/grammar/((?!assets/).*)", "destination": "/grammar/index.html" }
   ],
   "headers": [
     {
@@ -16,7 +16,7 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
-      "source": "/grammer/assets/(.*)",
+      "source": "/grammar/assets/(.*)",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     }
   ]
