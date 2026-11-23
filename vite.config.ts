@@ -3,10 +3,10 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: '/grammer/',
+  base: '/grammar/',
   plugins: [react(), tailwindcss()],
   build: {
-    outDir: 'dist/grammer',
+    outDir: 'dist/grammar',
     emptyOutDir: true,
   },
 })

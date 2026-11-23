@@ -1,12 +1,13 @@
 import { next } from '@vercel/functions'
 
 export const config = {
-  matcher: ['/', '/grammer', '/grammer/:path*'],
+  matcher: ['/', '/grammar', '/grammar/:path*', '/grammer', '/grammer/:path*'],
 }
 
 const COOKIE_NAME = 'gq_access'
 const COOKIE_MAX_AGE = 90 * 24 * 60 * 60
-const BASE = '/grammer'
+const BASE = '/grammar'
+const LEGACY = '/grammer'
 const FAIL_DELAY_MS = 800
 
 const encoder = new TextEncoder()
@@ -113,11 +114,56 @@ ${form}
   })
 }
 
-function redirect(location: string, extraHeaders: Record<string, string> = {}): Response {
-  return new Response(null, {
-    status: 303,
-    headers: { Location: location, 'Cache-Control': 'private, no-store', ...extraHeaders },
+function redirect(location: string, status: number, cookies: string[] = []): Response {
+  const headers = new Headers({
+    Location: location,
+    'Cache-Control': 'private, no-store',
   })
+  for (const cookie of cookies) headers.append('Set-Cookie', cookie)
+  return new Response(null, { status, headers })
+}
+
+function accessCookie(token: string): string {
+  return `${COOKIE_NAME}=${token}; Path=/; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`
+}
+
+function isUnder(pathname: string, prefix: string): boolean {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`)
+}
+
+function isUnlockPath(pathname: string): boolean {
+  return (
+    pathname === `${BASE}/unlock` ||
+    pathname === `${BASE}/unlock/` ||
+    pathname === `${LEGACY}/unlock` ||
+    pathname === `${LEGACY}/unlock/`
+  )
+}
+
+function safeNext(raw: string | null): string {
+  const fallback = `${BASE}/`
+  if (raw == null || raw.length === 0 || raw.length > 2048) return fallback
+  let value = raw
+  if (value.includes('%')) {
+    try {
+      value = decodeURIComponent(value)
+    } catch {
+      return fallback
+    }
+  }
+  if (!value.startsWith(BASE)) return fallback
+  const queryAt = value.indexOf('?')
+  const path = queryAt === -1 ? value : value.slice(0, queryAt)
+  const rest = path.slice(BASE.length)
+  if (rest !== '' && !rest.startsWith('/')) return fallback
+  if (path.includes('\\') || path.includes('//') || path.includes('..') || path.includes('@')) return fallback
+  if (/[\u0000-\u0020]/.test(value)) return fallback
+  return value
+}
+
+function toGrammar(pathname: string, search: string): string {
+  if (pathname === LEGACY) return `${BASE}${search}`
+  return `${BASE}${pathname.slice(LEGACY.length)}${search}`
 }
 
 async function readSubmittedCode(request: Request): Promise<string> {
@@ -131,9 +177,10 @@ async function readSubmittedCode(request: Request): Promise<string> {
 }
 
 export default async function middleware(request: Request): Promise<Response> {
-  const { pathname } = new URL(request.url)
+  const url = new URL(request.url)
+  const { pathname, search } = url
 
-  if (pathname === '/') return redirect(`${BASE}/`)
+  if (pathname === '/') return redirect(`${BASE}/`, 302)
 
   const settings = getSettings()
   if (!settings) return gatePage('המשחק עדיין לא הוגדר. פנו למורה.', false, 503)
@@ -141,23 +188,35 @@ export default async function middleware(request: Request): Promise<Response> {
   const token = await expectedToken(settings.code, settings.secret)
   const cookie = readCookie(request, COOKIE_NAME)
   const authorized = cookie !== null && (await safeEqual(cookie, token))
-  const isUnlock = pathname === `${BASE}/unlock` || pathname === `${BASE}/unlock/`
+  const unlock = isUnlockPath(pathname)
 
-  if (isUnlock && request.method === 'POST') {
+  if (unlock && request.method === 'POST') {
     const submitted = await readSubmittedCode(request)
     if (submitted && (await safeEqual(submitted, settings.code))) {
-      return redirect(`${BASE}/`, {
-        'Set-Cookie': `${COOKIE_NAME}=${token}; Path=${BASE}; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
-      })
+      return redirect(`${BASE}/`, 303, [accessCookie(token)])
     }
     await sleep(FAIL_DELAY_MS)
     return gatePage('קוד שגוי, נסו שוב', true, 401)
   }
 
-  if (authorized) {
-    if (isUnlock) return redirect(`${BASE}/`)
-    return next()
+  if (isUnder(pathname, BASE)) {
+    if (authorized) {
+      if (unlock) return redirect(`${BASE}/`, 302)
+      return next()
+    }
+    if (url.searchParams.get('migrated') === '1') return gatePage(null, true, 200)
+    return redirect(`${LEGACY}/migrate?next=${encodeURIComponent(safeNext(`${pathname}${search}`))}`, 302)
   }
 
-  return gatePage(null, true, 200)
+  if (isUnder(pathname, LEGACY)) {
+    const migrate = pathname === `${LEGACY}/migrate` || pathname === `${LEGACY}/migrate/`
+    if (migrate) {
+      if (authorized) return redirect(safeNext(url.searchParams.get('next')), 302, [accessCookie(token)])
+      return redirect(`${BASE}/?migrated=1`, 302)
+    }
+    if (authorized) return redirect(safeNext(toGrammar(pathname, search)), 302, [accessCookie(token)])
+    return redirect(`${BASE}/?migrated=1`, 302)
+  }
+
+  return next()
 }
