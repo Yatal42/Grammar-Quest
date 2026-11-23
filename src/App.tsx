@@ -23,12 +23,16 @@ export default function App() {
   const [profile, setProfile] = useState<Profile | null>(() => loadProfile())
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
 
+  const storeProfile = (next: Profile | null) => {
+    saveProfile(next)
+    setProfile(next)
+  }
+
   useEffect(() => {
-    saveProfile(profile)
     setSoundEnabled(profile?.sound ?? true)
   }, [profile])
 
-  if (!profile) return <Onboarding onDone={setProfile} />
+  if (!profile) return <Onboarding onDone={storeProfile} />
 
   const start = (mode: Mode, topicId?: string) =>
     setScreen({ name: 'game', mode, topicId, items: buildSession(mode, profile.grade, topicId) })
@@ -45,7 +49,7 @@ export default function App() {
           ? { ...profile.stars, [topicId]: Math.max(profile.stars[topicId] ?? 0, result.stars) }
           : profile.stars,
     }
-    setProfile(next)
+    storeProfile(next)
     setScreen({ name: 'results', mode, topicId, result, prev })
   }
 
@@ -59,12 +63,12 @@ export default function App() {
           onLearn={(topicId) =>
             setScreen(topicId ? { name: 'lesson', topicId, from: 'home' } : { name: 'lessons' })
           }
-          onUpdate={setProfile}
-          onReset={() => setProfile(null)}
+          onUpdate={storeProfile}
+          onReset={() => storeProfile(null)}
         />
       )}
       {screen.name === 'dictionary' && (
-        <Dictionary profile={profile} onUpdate={setProfile} onBack={() => setScreen({ name: 'home' })} />
+        <Dictionary profile={profile} onUpdate={storeProfile} onBack={() => setScreen({ name: 'home' })} />
       )}
       {screen.name === 'lessons' && (
         <Lessons
