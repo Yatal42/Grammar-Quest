@@ -1,8 +1,23 @@
-import type { Grade } from '../data/topics'
+import type { Grade, Question } from '../data/topics'
 
 export type RecentQuestions = {
   topics?: Record<string, string[]>
   global?: string[]
+}
+
+export type TodayKind = 'blitz' | 'topic' | 'words'
+
+export type TodayCard = {
+  date: string
+  kind: TodayKind
+  topicId?: string
+  done?: boolean
+}
+
+export type FixCard = {
+  sig: string
+  topicId: string
+  question: Question
 }
 
 export type Profile = {
@@ -16,6 +31,9 @@ export type Profile = {
   sound: boolean
   learned?: string[]
   recent?: RecentQuestions
+  today?: TodayCard
+  playedDays?: string[]
+  fixes?: FixCard[]
 }
 
 const KEY = 'grammar-quest-profile'

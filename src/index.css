@@ -29,12 +29,26 @@ body {
 .animate-shake { animation: shake 0.4s ease-in-out; }
 .animate-float { animation: float 3s ease-in-out infinite; }
 
+@keyframes lane-drop {
+  0% { transform: translateY(-42px) scale(0.94); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes hop {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-22px) scale(1.12); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.animate-lane { animation: lane-drop var(--lane, 0.42s) ease-out both; }
+.animate-hop { animation: hop 0.32s ease-out; }
+
 @utility card {
   @apply rounded-3xl bg-white/10 backdrop-blur-md border border-white/15 shadow-xl;
 }
 
 @utility btn {
-  @apply rounded-2xl px-5 py-3 font-bold transition active:scale-95 disabled:opacity-40 disabled:pointer-events-none cursor-pointer;
+  @apply min-h-11 rounded-2xl px-5 py-3 font-bold transition active:scale-95 disabled:opacity-40 disabled:pointer-events-none cursor-pointer;
 }
 
 @utility btn-primary {

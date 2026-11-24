@@ -13,9 +13,10 @@ type Props = {
   profile: Profile
   onAgain: () => void
   onHome: () => void
+  todayDone?: boolean
 }
 
-export default function Results({ mode, result, prev, profile, onAgain, onHome }: Props) {
+export default function Results({ mode, result, prev, profile, onAgain, onHome, todayDone }: Props) {
   const levelUp = levelFor(profile.xp).level > levelFor(prev.xp).level
   const newBlitzRecord = mode === 'blitz' && result.score > prev.blitzBest && result.score > 0
   const great = result.stars >= 2 || levelUp || newBlitzRecord
@@ -61,14 +62,15 @@ export default function Results({ mode, result, prev, profile, onAgain, onHome }
           <div className="text-white/70" dir="ltr">
             +{result.score.toLocaleString()} XP
           </div>
+          {todayDone && <div className="rounded-2xl bg-amber-300/15 p-3 font-bold text-amber-100">היום סגור, מחר מחכה משהו חדש</div>}
         </div>
 
-        <div className="mt-6 flex gap-3">
-          <button onClick={onHome} className="btn-ghost flex-1">
-            🏠 לתפריט
-          </button>
-          <button onClick={onAgain} className="btn-primary flex-1">
+        <div className="mt-6 space-y-3">
+          <button onClick={onAgain} autoFocus className="btn-primary w-full py-4 text-xl">
             🔁 עוד סיבוב
+          </button>
+          <button onClick={onHome} className="btn-ghost w-full">
+            🏠 לתפריט
           </button>
         </div>
       </div>

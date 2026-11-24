@@ -18,11 +18,14 @@ type Props = {
   items: PlayItem[]
   onFinish: (r: GameResult) => void
   onQuit: () => void
+  avatar?: string
+  finishLabel?: string
+  onMiss?: (item: PlayItem) => void
 }
 
 const SPEED_WINDOW_MS = 15000
 
-export default function Game({ mode, items, onFinish, onQuit }: Props) {
+export default function Game({ mode, items, onFinish, onQuit, avatar, finishLabel, onMiss }: Props) {
   const blitz = mode === 'blitz'
   const [idx, setIdx] = useState(0)
   const [score, setScore] = useState(0)
@@ -33,7 +36,7 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
   const [mistakes, setMistakes] = useState<Mistake[]>([])
   const [timeLeft, setTimeLeft] = useState(BLITZ_SECONDS)
   const [done, setDone] = useState(false)
-  const [showTip, setShowTip] = useState(mode === 'topic')
+  const [showTip, setShowTip] = useState(false)
   const startedAt = useRef(Date.now())
   const finished = useRef(false)
 
@@ -88,11 +91,12 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
       } else {
         setStreak(0)
         setMistakes((m) => [...m, { item, given: value }])
+        onMiss?.(item)
         sfx.wrong()
       }
       setAnswered({ value, ok, points })
     },
-    [answered, done, item, blitz, streak],
+    [answered, done, item, blitz, streak, onMiss],
   )
 
   useEffect(() => {
@@ -116,18 +120,32 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
   if (!item) return null
 
   const progress = blitz ? timeLeft / BLITZ_SECONDS : answeredCount / items.length
+  const dock = !!answered && !blitz
 
   return (
-    <div className="mx-auto max-w-3xl space-y-5">
+    <div
+      className={`mx-auto flex w-full max-w-3xl flex-col gap-3 sm:gap-5 ${dock ? 'h-[calc(100dvh-1.5rem)] -mb-6 sm:h-[calc(100dvh-2.5rem)] sm:-mb-10' : ''}`}
+    >
+      <div className="shrink-0 space-y-5">
       <div className="flex items-center gap-3">
-        <button onClick={onQuit} className="btn-ghost px-3 py-2" title="יציאה">
+        <button onClick={onQuit} className="btn-ghost min-h-11 min-w-11 px-3" title="יציאה">
           ✕
         </button>
-        <div className="h-4 flex-1 overflow-hidden rounded-full bg-white/15">
-          <div
-            className={`h-full rounded-full transition-all duration-1000 ${blitz && timeLeft <= 10 ? 'bg-rose-500' : 'bg-gradient-to-l from-emerald-300 to-teal-500'}`}
-            style={{ width: `${progress * 100}%` }}
-          />
+        <div className="relative h-7 flex-1">
+          <div className="absolute inset-x-0 top-1/2 h-4 -translate-y-1/2 overflow-hidden rounded-full bg-white/15">
+            <div
+              className={`h-full rounded-full transition-all duration-700 ${blitz && timeLeft <= 10 ? 'bg-rose-500' : 'bg-gradient-to-l from-emerald-300 to-teal-500'}`}
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+          {avatar && (
+            <span
+              className="pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 text-xl leading-none transition-all duration-700"
+              style={{ insetInlineStart: `clamp(0px, calc(${progress * 100}% - 0.7rem), calc(100% - 1.35rem))` }}
+            >
+              {avatar}
+            </span>
+          )}
         </div>
         <div className="min-w-16 text-center font-bold tabular-nums">
           {blitz ? `⏱ ${timeLeft}` : `${Math.min(idx + 1, items.length)}/${items.length}`}
@@ -143,10 +161,12 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
           {streak >= 3 && <span className="mr-1 text-sm">On fire!</span>}
         </div>
       </div>
+      </div>
 
+      <div className={`space-y-3 sm:space-y-5 ${dock ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain' : ''}`}>
       <div
         key={idx}
-        className={`card relative p-6 sm:p-8 ${answered ? (answered.ok ? 'ring-4 ring-emerald-400/70' : 'animate-shake ring-4 ring-rose-400/70') : 'animate-pop'}`}
+        className={`card relative p-4 sm:p-8 ${answered ? (answered.ok ? 'ring-4 ring-emerald-400/70' : 'animate-shake ring-4 ring-rose-400/70') : 'animate-pop'}`}
       >
         <div className="mb-4 flex items-center gap-2 text-sm text-white/60">
           <span>{item.topic.emoji}</span>
@@ -156,13 +176,13 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
           {!blitz && (
             <button
               onClick={() => setShowTip((v) => !v)}
-              className="mr-auto cursor-pointer rounded-full bg-white/10 px-3 py-1 text-white/80 hover:bg-white/20"
+              className="mr-auto flex min-h-11 items-center rounded-full bg-white/10 px-3 text-white/80 hover:bg-white/20"
             >
               💡 טיפ
             </button>
           )}
         </div>
-        {showTip && !blitz && (
+        {showTip && !blitz && !answered && (
           <div className="animate-pop mb-5 rounded-2xl bg-amber-300/15 p-4 text-amber-100">{item.topic.tip}</div>
         )}
 
@@ -179,8 +199,8 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
         )}
       </div>
 
-      {answered && !blitz && (
-        <div className="animate-pop card space-y-4 p-5">
+      {dock && (
+        <div className="animate-pop card p-4 sm:p-5">
           <div className="flex items-start gap-3">
             <div className="text-3xl">{answered.ok ? '🎉' : '💡'}</div>
             <div>
@@ -189,6 +209,11 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
               </div>
               {!answered.ok && (
                 <div className="mt-1 text-white/80">
+                  הבחירה שלך:{' '}
+                  <span dir="ltr" className="font-bold text-rose-200">
+                    {answered.value}
+                  </span>
+                  <span className="mx-2 text-white/40">·</span>
                   התשובה הנכונה:{' '}
                   <span dir="ltr" className="font-bold text-emerald-300">
                     {item.correct}
@@ -198,8 +223,14 @@ export default function Game({ mode, items, onFinish, onQuit }: Props) {
               <div className="mt-1 text-white/80">{item.question.e}</div>
             </div>
           </div>
-          <button autoFocus onClick={next} className="btn-primary w-full text-lg">
-            {idx + 1 >= items.length ? 'לתוצאות 🏁' : 'הבא ←'}
+        </div>
+      )}
+      </div>
+
+      {dock && (
+        <div className="-mx-4 shrink-0 border-t border-white/15 bg-indigo-950/90 px-4 pt-3 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <button autoFocus onClick={next} className="btn-primary min-h-12 w-full text-lg">
+            {idx + 1 >= items.length ? (finishLabel ?? 'לתוצאות 🏁') : 'הבא ←'}
           </button>
         </div>
       )}
@@ -248,7 +279,7 @@ function ChoiceView({ item, answered, onAnswer }: ViewProps) {
   return (
     <div className="space-y-6">
       <Sentence text={item.question.q} fill={answered ? item.correct : undefined} />
-      <div className="grid gap-3 sm:grid-cols-2" dir="ltr">
+      <div className={`grid gap-3 ${answered ? 'grid-cols-2' : 'sm:grid-cols-2'}`} dir="ltr">
         {item.options.map((o, i) => {
           const isCorrect = o === item.correct
           const isPicked = answered?.value === o
@@ -264,7 +295,7 @@ function ChoiceView({ item, answered, onAnswer }: ViewProps) {
               key={o}
               disabled={!!answered}
               onClick={() => onAnswer(o)}
-              className={`flex cursor-pointer items-center gap-3 rounded-2xl border-2 px-4 py-4 text-left text-xl font-semibold transition disabled:cursor-default ${style}`}
+              className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl border-2 px-4 text-left font-semibold transition disabled:cursor-default ${answered ? 'py-2 text-base' : 'py-4 text-xl'} ${style}`}
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/20 text-sm">
                 {i + 1}
@@ -308,7 +339,7 @@ function OrderView({ item, answered, onAnswer, auto }: ViewProps & { auto: boole
           <button
             key={i}
             onClick={() => remove(i)}
-            className="animate-pop cursor-pointer rounded-xl bg-amber-400 px-3 py-2 text-lg font-bold text-indigo-950 shadow"
+            className="animate-pop min-h-11 min-w-11 cursor-pointer rounded-xl bg-amber-400 px-3 py-2 text-lg font-bold text-indigo-950 shadow"
           >
             {item.options[i]}
           </button>
@@ -316,17 +347,19 @@ function OrderView({ item, answered, onAnswer, auto }: ViewProps & { auto: boole
         {complete && <span className="text-2xl font-bold">{punctuation(item.correct)}</span>}
       </div>
 
-      <div className="flex min-h-14 flex-wrap gap-2">
-        {remaining.map((i) => (
-          <button
-            key={i}
-            onClick={() => add(i)}
-            className="cursor-pointer rounded-xl border-2 border-white/25 bg-white/10 px-3 py-2 text-lg font-semibold transition hover:-translate-y-0.5 hover:bg-white/20"
-          >
-            {item.options[i]}
-          </button>
-        ))}
-      </div>
+      {!answered && (
+        <div className="flex min-h-14 flex-wrap gap-2">
+          {remaining.map((i) => (
+            <button
+              key={i}
+              onClick={() => add(i)}
+              className="min-h-11 min-w-11 cursor-pointer rounded-xl border-2 border-white/25 bg-white/10 px-3 py-2 text-lg font-semibold transition hover:-translate-y-0.5 hover:bg-white/20"
+            >
+              {item.options[i]}
+            </button>
+          ))}
+        </div>
+      )}
 
       {answered && !answered.ok && (
         <p className="text-lg">

@@ -1,13 +1,18 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { GRADE_LABELS, TOPICS, type Grade, type Topic } from '../data/topics'
 import { LESSONS, type LessonTable } from '../data/lessons'
+import { buildWarmup, type PlayItem } from '../lib/game'
+import Game, { type GameResult } from './Game'
 
 type Props = {
   topic: Topic
   grade: Grade
+  avatar: string
   onPractice: () => void
   onBack: () => void
   onOpen: (topicId: string) => void
+  onMiss?: (item: PlayItem) => void
+  onScore?: (result: GameResult) => void
 }
 
 const LATIN = /((?:['’][A-Za-z]|[A-Za-z])[A-Za-z0-9'’\-/.…!?,:=+() ]*[A-Za-z0-9'’!?…])/g
@@ -43,7 +48,7 @@ function SpeakButton({ text }: { text: string }) {
     <button
       onClick={() => speak(text)}
       title="השמעה"
-      className="shrink-0 cursor-pointer rounded-full bg-white/10 px-2 py-1 text-base transition hover:bg-white/25 active:scale-90"
+      className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/10 text-lg transition hover:bg-white/25 active:scale-90"
     >
       🔊
     </button>
@@ -59,9 +64,9 @@ function English({ text, className = '' }: { text: string; className?: string })
   )
 }
 
-function Section({ icon, title, children }: { icon: string; title: string; children: ReactNode }) {
+function Section({ icon, title, children, className = '' }: { icon: string; title: string; children: ReactNode; className?: string }) {
   return (
-    <section className="card p-5 sm:p-6">
+    <section className={`card p-5 sm:p-6 ${className}`}>
       <h2 className="mb-4 text-xl font-extrabold">
         {icon} {title}
       </h2>
@@ -118,30 +123,83 @@ function Table({ table }: { table: LessonTable }) {
   )
 }
 
-export default function Lesson({ topic, grade, onPractice, onBack, onOpen }: Props) {
+export default function Lesson({ topic, grade, avatar, onPractice, onBack, onOpen, onMiss, onScore }: Props) {
   const lesson = LESSONS[topic.id]
   const visible = TOPICS.filter((t) => t.grade <= Math.max(grade, topic.grade))
   const idx = visible.findIndex((t) => t.id === topic.id)
   const prev = visible[idx - 1]
   const next = visible[idx + 1]
+  const [phase, setPhase] = useState<'play' | 'read'>('play')
+  const [round, setRound] = useState<PlayItem[]>(() => buildWarmup(topic))
+  const [misses, setMisses] = useState<PlayItem[]>([])
+  const seenTopic = useRef(topic.id)
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
+    if (seenTopic.current !== topic.id) {
+      seenTopic.current = topic.id
+      const nextRound = buildWarmup(topic)
+      setRound(nextRound)
+      setMisses([])
+      setPhase(nextRound.length ? 'play' : 'read')
+    }
     return () => {
       if ('speechSynthesis' in window) speechSynthesis.cancel()
     }
-  }, [topic.id])
+  }, [topic.id, topic])
+
+  if (phase === 'play' && round.length > 0) {
+    return (
+      <Game
+        key={topic.id}
+        mode="topic"
+        items={round}
+        avatar={avatar}
+        finishLabel="אל החוק ←"
+        onMiss={onMiss}
+        onQuit={onBack}
+        onFinish={(result) => {
+          setMisses(result.mistakes.map((miss) => miss.item))
+          onScore?.(result)
+          setPhase('read')
+          window.scrollTo({ top: 0 })
+        }}
+      />
+    )
+  }
 
   return (
     <div key={topic.id} className="animate-pop mx-auto max-w-3xl space-y-5">
       <div className="flex items-center justify-between gap-3">
-        <button onClick={onBack} className="btn-ghost py-2 text-sm">
+        <button onClick={onBack} className="btn-ghost text-sm">
           → חזרה
         </button>
-        <button onClick={onPractice} className="btn-primary py-2 text-sm">
+        <button onClick={onPractice} className="btn-primary text-sm">
           לתרגל את הנושא 🎮
         </button>
       </div>
+
+      {misses.length > 0 ? (
+        <div className="card border-amber-300/50 bg-amber-300/15 p-5">
+          <h2 className="mb-3 text-xl font-extrabold">החוק שמתחבר למה שפספסת</h2>
+          <ul className="space-y-3">
+            {misses.map((miss) => (
+              <li key={miss.sig}>
+                <p dir="ltr" className="text-left font-bold text-emerald-200">
+                  {miss.correct}
+                </p>
+                <p className="mt-1 text-white/90">{miss.question.e}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p className="text-center font-bold text-emerald-200">שלוש נכונות. אפשר לקרוא את החוק, או ישר לתרגל.</p>
+      )}
+
+      <button onClick={onPractice} className="btn-primary w-full text-lg">
+        לתרגל את הנושא 🎮
+      </button>
 
       <header className="card p-6">
         <div className="flex items-center gap-4">
@@ -242,7 +300,7 @@ export default function Lesson({ topic, grade, onPractice, onBack, onOpen }: Pro
             </Section>
           )}
 
-          <Section icon="⚠️" title="טעויות נפוצות">
+          <Section icon="⚠️" title="טעויות נפוצות" className={misses.length ? 'ring-2 ring-amber-300/70' : ''}>
             <div className="space-y-3">
               {lesson.mistakes.map((m, i) => (
                 <div key={i} className="rounded-2xl bg-white/5 p-4">
@@ -276,12 +334,12 @@ export default function Lesson({ topic, grade, onPractice, onBack, onOpen }: Pro
         </button>
         <div className="flex gap-3">
           {prev && (
-            <button onClick={() => onOpen(prev.id)} className="btn-ghost flex-1 py-2 text-sm">
+            <button onClick={() => onOpen(prev.id)} className="btn-ghost min-w-0 flex-1 text-sm">
               → {prev.he}
             </button>
           )}
           {next && (
-            <button onClick={() => onOpen(next.id)} className="btn-ghost flex-1 py-2 text-sm">
+            <button onClick={() => onOpen(next.id)} className="btn-ghost min-w-0 flex-1 text-sm">
               {next.he} ←
             </button>
           )}

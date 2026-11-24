@@ -15,6 +15,8 @@ import {
   linkingWords,
   mediaPublic,
 } from './vocab/academic'
+import { argumentCraft, lifeScience, literatureCraft, physicalScience } from './vocab/upper'
+import { academicPlus, civicEconomy, earthPolicy, healthScience, languageStudy, researchData } from './vocab/upper-more'
 
 export type { VocabCategory, Word, VocabLevel } from './vocab/base'
 export { wordLevel, LEVEL_LABEL, VOCAB_LEVELS }
@@ -65,6 +67,16 @@ export const VOCABULARY: VocabCategory[] = [
   mediaPublic,
   dataMath,
   academicCore,
+  literatureCraft,
+  argumentCraft,
+  lifeScience,
+  physicalScience,
+  earthPolicy,
+  civicEconomy,
+  healthScience,
+  researchData,
+  languageStudy,
+  academicPlus,
 ]
 
 export const wordKey = (categoryId: string, word: Word) => `${categoryId}:${word.en}`
