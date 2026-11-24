@@ -1,5 +1,5 @@
 import type { Grade, Question, Topic } from '../data/topics'
-import { planSession } from './generate'
+import { pickFresh, planSession, poolFor } from './generate'
 import type { RecentQuestions } from './storage'
 
 export type Mode = 'topic' | 'blitz' | 'mix'
@@ -36,6 +36,16 @@ function toItem(topic: PlayItem['topic'], question: PlayItem['question'], sig: s
     guard++
   }
   return { topic, question, options, correct: question.a, sig }
+}
+
+export function buildWarmup(topic: Topic): PlayItem[] {
+  try {
+    const picked = pickFresh(poolFor(topic), [], 3)
+    if (picked.length) return picked.map((item) => toItem(item.topic, item.question, item.sig))
+  } catch {
+    return topic.questions.slice(0, 3).map((question, index) => toItem(topic, question, `${topic.id}:warm:${index}`))
+  }
+  return topic.questions.slice(0, 3).map((question, index) => toItem(topic, question, `${topic.id}:warm:${index}`))
 }
 
 export function buildSession(
