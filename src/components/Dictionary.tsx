@@ -1,5 +1,15 @@
 import { useDeferredValue, useMemo, useState } from 'react'
-import { VOCABULARY, wordKey, type VocabCategory, type Word } from '../data/vocabulary'
+import { createPortal } from 'react-dom'
+import {
+  LEVEL_LABEL,
+  VOCAB_LEVELS,
+  VOCABULARY,
+  wordKey,
+  wordLevel,
+  type VocabCategory,
+  type VocabLevel,
+  type Word,
+} from '../data/vocabulary'
 import { shuffle } from '../lib/game'
 import { sfx } from '../lib/sound'
 import type { Profile } from '../lib/storage'
@@ -13,13 +23,14 @@ type Props = {
 const PRACTICE_SIZE = 10
 const RESULTS_PAGE = 60
 
+type LevelFilter = 'all' | VocabLevel
+
 const normalize = (s: string) => s.toLowerCase().trim()
 
 const INDEX = VOCABULARY.flatMap((c) =>
   c.words.map((w) => ({ c, w, key: wordKey(c.id, w), en: normalize(w.en), he: w.he })),
 )
 const ALL_KEYS = new Set(INDEX.map((e) => e.key))
-const TOTAL_WORDS = INDEX.length
 
 function searchWords(q: string) {
   const rank = (e: (typeof INDEX)[number]) =>
@@ -45,11 +56,16 @@ export default function Dictionary({ profile, onUpdate, onBack }: Props) {
   const [practice, setPractice] = useState(0)
   const [query, setQuery] = useState('')
   const [shown, setShown] = useState(RESULTS_PAGE)
+  const [level, setLevel] = useState<LevelFilter>('all')
   const learned = useMemo(() => new Set((profile.learned ?? []).filter((k) => ALL_KEYS.has(k))), [profile.learned])
   const category = VOCABULARY.find((c) => c.id === catId) ?? null
   const q = normalize(useDeferredValue(query))
+  const inLevel = (word: Word) => level === 'all' || wordLevel(word) === level
+  const visibleIndex = useMemo(() => INDEX.filter((e) => inLevel(e.w)), [level])
+  const learnedVisible = useMemo(() => visibleIndex.filter((e) => learned.has(e.key)).length, [visibleIndex, learned])
+  const shownWords = category ? category.words.filter(inLevel) : []
 
-  const results = useMemo(() => (q ? searchWords(q) : []), [q])
+  const results = useMemo(() => (q ? searchWords(q).filter((e) => inLevel(e.w)) : []), [q, level])
 
   const changeQuery = (value: string) => {
     setQuery(value)
@@ -75,6 +91,12 @@ export default function Dictionary({ profile, onUpdate, onBack }: Props) {
     setPractice(0)
   }
 
+  const pickLevel = (next: LevelFilter) => {
+    setLevel(next)
+    setShown(RESULTS_PAGE)
+    setPractice(0)
+  }
+
   return (
     <div className="animate-pop space-y-6">
       <header className="card flex flex-wrap items-center gap-3 p-4">
@@ -91,16 +113,31 @@ export default function Dictionary({ profile, onUpdate, onBack }: Props) {
             )}
           </h1>
           <p className="text-xs text-white/60">
-            נלמדו {learned.size} מתוך {TOTAL_WORDS} מילים
+            נלמדו {learnedVisible} מתוך {visibleIndex.length} מילים
           </p>
         </div>
         <input
           value={query}
           onChange={(e) => changeQuery(e.target.value)}
           placeholder="🔍 חיפוש באנגלית או בעברית…"
-          className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-2 text-white placeholder:text-white/40 focus:border-amber-300 focus:outline-none sm:w-72"
+          className="min-h-11 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-2 text-white placeholder:text-white/40 focus:border-amber-300 focus:outline-none sm:w-72"
         />
       </header>
+
+      {!practice && (
+        <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="סינון לפי רמה">
+          <LevelChip active={level === 'all'} label="הכל" onClick={() => pickLevel('all')} />
+          {VOCAB_LEVELS.map((id) => (
+            <LevelChip
+              key={id}
+              active={level === id}
+              label={id === profile.grade ? `${LEVEL_LABEL[id]} · שלך` : LEVEL_LABEL[id]}
+              title={id === profile.grade ? 'הכיתה שלך' : undefined}
+              onClick={() => pickLevel(id)}
+            />
+          ))}
+        </div>
+      )}
 
       {q ? (
         <section className="space-y-3">
@@ -127,7 +164,7 @@ export default function Dictionary({ profile, onUpdate, onBack }: Props) {
       ) : category && practice ? (
         <Practice
           key={practice}
-          category={category}
+          category={{ ...category, words: shownWords }}
           onCorrect={(w) => setLearned(wordKey(category.id, w), true)}
           onAgain={() => setPractice((n) => n + 1)}
           onDone={() => setPractice(0)}
@@ -140,28 +177,36 @@ export default function Dictionary({ profile, onUpdate, onBack }: Props) {
                 {category.title}
               </h2>
               <p className="text-sm text-white/60">
-                {category.words.length} מילים · נלמדו {category.words.filter((w) => learned.has(wordKey(category.id, w))).length}
+                {shownWords.length} מילים · נלמדו {shownWords.filter((w) => learned.has(wordKey(category.id, w))).length}
               </p>
             </div>
-            <button onClick={() => setPractice(1)} className="btn-primary">
-              🎯 תרגול מילים
-            </button>
+            {shownWords.length > 0 && (
+              <button onClick={() => setPractice(1)} className="btn-primary">
+                🎯 תרגול מילים
+              </button>
+            )}
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {category.words.map((w) => (
-              <WordCard
-                key={w.en}
-                word={w}
-                learned={learned.has(wordKey(category.id, w))}
-                onToggle={(v) => setLearned(wordKey(category.id, w), v)}
-              />
-            ))}
-          </div>
+          {shownWords.length === 0 ? (
+            <p className="text-white/70">אין מילים ברמה הזו בקטגוריה הזו.</p>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {shownWords.map((w) => (
+                <WordCard
+                  key={w.en}
+                  word={w}
+                  learned={learned.has(wordKey(category.id, w))}
+                  onToggle={(v) => setLearned(wordKey(category.id, w), v)}
+                />
+              ))}
+            </div>
+          )}
         </section>
       ) : (
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {VOCABULARY.map((c) => {
-            const done = c.words.filter((w) => learned.has(wordKey(c.id, w))).length
+          {VOCABULARY.flatMap((c) => {
+            const words = c.words.filter(inLevel)
+            if (words.length === 0) return []
+            const done = words.filter((w) => learned.has(wordKey(c.id, w))).length
             return (
               <button
                 key={c.id}
@@ -177,11 +222,11 @@ export default function Dictionary({ profile, onUpdate, onBack }: Props) {
                   <div className="h-2 overflow-hidden rounded-full bg-white/15">
                     <div
                       className="h-full rounded-full bg-gradient-to-l from-emerald-300 to-teal-500 transition-all"
-                      style={{ width: `${(done / c.words.length) * 100}%` }}
+                      style={{ width: `${(done / words.length) * 100}%` }}
                     />
                   </div>
                   <div className="mt-1 text-xs text-white/50">
-                    {done}/{c.words.length} מילים
+                    {done}/{words.length} מילים
                   </div>
                 </div>
               </button>
@@ -190,6 +235,29 @@ export default function Dictionary({ profile, onUpdate, onBack }: Props) {
         </section>
       )}
     </div>
+  )
+}
+
+function LevelChip({
+  active,
+  label,
+  title,
+  onClick,
+}: {
+  active: boolean
+  label: string
+  title?: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`min-h-11 shrink-0 rounded-full px-3 text-sm font-bold ${active ? 'bg-amber-300 text-indigo-950' : 'bg-white/10 text-white/80'}`}
+    >
+      {label}
+    </button>
   )
 }
 
@@ -226,12 +294,17 @@ function WordCard({ word, tag, learned, onToggle }: WordCardProps) {
             {word.example}
           </div>
         )}
-        {tag && <div className="mt-2 inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/70">{tag}</div>}
+        <div className="mt-2 flex flex-wrap gap-1">
+          <span className="inline-block rounded-full bg-amber-300/15 px-2 py-0.5 text-xs font-bold text-amber-100">
+            {LEVEL_LABEL[wordLevel(word)]}
+          </span>
+          {tag && <span className="inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/70">{tag}</span>}
+        </div>
       </div>
       <button
         onClick={() => onToggle(!learned)}
         title={learned ? 'ביטול סימון' : 'סימון כמילה שלמדתי'}
-        className={`flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 font-bold transition ${learned ? 'border-emerald-300 bg-emerald-400 text-emerald-950' : 'border-white/25 text-white/30 hover:border-white/50 hover:text-white/60'}`}
+        className={`flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 text-lg font-bold transition ${learned ? 'border-emerald-300 bg-emerald-400 text-emerald-950' : 'border-white/25 text-white/30 hover:border-white/50 hover:text-white/60'}`}
       >
         ✓
       </button>
@@ -314,7 +387,7 @@ function Practice({ category, onCorrect, onAgain, onDone }: PracticeProps) {
   const ok = picked === item.word.he
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
+    <div className={`mx-auto max-w-2xl space-y-5 ${picked ? 'pb-[calc(5rem+env(safe-area-inset-bottom))]' : ''}`}>
       <div className="flex items-center gap-3">
         <div className="h-4 flex-1 overflow-hidden rounded-full bg-white/15">
           <div
@@ -338,7 +411,7 @@ function Practice({ category, onCorrect, onAgain, onDone }: PracticeProps) {
           </div>
           <SpeakButton text={item.word.en} className="h-12 w-12 text-2xl" />
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className={`grid gap-3 ${picked ? 'grid-cols-2' : 'sm:grid-cols-2'}`}>
           {item.options.map((o) => {
             const isCorrect = o === item.word.he
             const style = !picked
@@ -353,7 +426,7 @@ function Practice({ category, onCorrect, onAgain, onDone }: PracticeProps) {
                 key={o}
                 disabled={!!picked}
                 onClick={() => answer(o)}
-                className={`cursor-pointer rounded-2xl border-2 px-4 py-4 text-xl font-semibold transition disabled:cursor-default ${style}`}
+                className={`min-h-11 cursor-pointer rounded-2xl border-2 px-4 font-semibold transition disabled:cursor-default ${picked ? 'py-2 text-base' : 'py-4 text-xl'} ${style}`}
               >
                 {o}
               </button>
@@ -363,20 +436,29 @@ function Practice({ category, onCorrect, onAgain, onDone }: PracticeProps) {
       </div>
 
       {picked && (
-        <div className="animate-pop card space-y-4 p-5">
+        <div className="animate-pop card space-y-3 p-5">
           <div className={`text-lg font-bold ${ok ? 'text-emerald-300' : 'text-rose-300'}`}>
             {ok ? 'בול! 🎉' : 'לא נורא, ככה לומדים! 💡'}
           </div>
+          {!ok && <div className="font-bold text-emerald-300">{item.word.he}</div>}
           {item.word.example && (
             <div dir="ltr" className="text-right text-white/80 italic">
               {item.word.example}
             </div>
           )}
-          <button autoFocus onClick={next} className="btn-primary w-full text-lg">
-            {idx + 1 >= questions.length ? 'לתוצאות 🏁' : 'הבא ←'}
-          </button>
         </div>
       )}
+      {picked &&
+        createPortal(
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/15 bg-indigo-950/90 px-4 pt-3 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <div className="mx-auto max-w-2xl">
+              <button autoFocus onClick={next} className="btn-primary min-h-12 w-full text-lg">
+                {idx + 1 >= questions.length ? 'לתוצאות 🏁' : 'הבא ←'}
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }
